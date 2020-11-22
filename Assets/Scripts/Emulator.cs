@@ -137,7 +137,7 @@ public class Emulator : MonoSingleton<Emulator>
     public unsafe void Setup()
     {
         ScreenTexture = new Texture2D(256, 240, TextureFormat.BGRA32, false);
-        //tex_ = new Texture2D(256, 240, TextureFormat.R8, false);
+        ScreenTexture.wrapMode = TextureWrapMode.Mirror;
 
         LibRetro.retro_set_environment(environment_callback);
         log("set_environment");

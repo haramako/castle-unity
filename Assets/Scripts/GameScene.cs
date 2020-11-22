@@ -16,6 +16,71 @@ public class GameScene : MonoSingleton<GameScene>
     public Emulator Emulator;
 
     Canvas canvas_;
+    TouchArea[] touchAreas_;
+
+    IEnumerator Start()
+    {
+        Application.targetFrameRate = 60;
+
+        setupUi();
+        yield return setupFiles();
+        Emulator.Setup();
+
+        RawImage.texture = Emulator.ScreenTexture;
+
+        Emulator.LoadState();
+
+        while (true)
+        {
+            updateMisc();
+            updateInput(); // Emulator.RunOneFrame より先が望ましい
+            Emulator.RunOneFrame();
+            yield return null;
+        }
+
+    }
+
+#pragma warning disable CS0618 // WWWを使う
+    IEnumerator download(string url, string savePath)
+    {
+        var request = new WWW(url);
+        yield return request;
+        if (request.error != null)
+        {
+            throw new Exception(request.error);
+        }
+        File.WriteAllBytes(savePath, request.bytes);
+        Debug.Log($"Download {url}");
+    }
+#pragma warning restore CS0618
+
+    IEnumerator setupFiles()
+    {
+        yield return download(Application.streamingAssetsPath + "/castle.nes", Path.Combine(Application.persistentDataPath, "castle.nes"));
+        yield return download(Application.streamingAssetsPath + "/custom.pal", Path.Combine(Application.persistentDataPath, "custom.pal"));
+    }
+
+    void setupUi()
+    {
+        canvas_ = FindObjectOfType<Canvas>();
+        touchAreas_ = FindObjectsOfType<TouchArea>();
+    }
+
+    void updateMisc()
+    {
+        if (Input.GetKey(KeyCode.S))
+        {
+            Emulator.SaveState();
+        }
+        else if (Input.GetKey(KeyCode.L))
+        {
+            Emulator.LoadState();
+        }
+        else if (Input.GetKey(KeyCode.R))
+        {
+            Emulator.ResetMachine();
+        }
+    }
 
     static readonly Dictionary<KeyCode, int> KeyMap = new Dictionary<KeyCode, int> {
         {KeyCode.UpArrow, 4 },
@@ -52,22 +117,19 @@ public class GameScene : MonoSingleton<GameScene>
         {
             var pos = t.position;
             Debug.LogError($"touch {t.fingerId}");
-            touchButton(pos);
+            processPointer(pos);
         }
 
         // Mouse
         if (Input.GetMouseButton(0))
         {
-            touchButton(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
+            processPointer(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
         }
 
     }
 
-    void touchButton(Vector2 pos)
+    void processPointer(Vector2 pos)
     {
-        //Debug.LogError(pos);
-        //var ray = canvas.worldCamera.ScreenPointToRay(pos);
-        var raycaster = canvas_.GetComponent<GraphicRaycaster>();
         foreach (var touchArea in touchAreas_)
         {
             var rt = touchArea.GetComponent<RectTransform>();
@@ -76,25 +138,7 @@ public class GameScene : MonoSingleton<GameScene>
             {
                 if (touchArea.ButtonId == -1)
                 {
-                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rt, pos, null, out var localPoint))
-                    {
-                        if (localPoint.x < -30)
-                        {
-                            Emulator.UpdateKey(0, 1, 0, 6, 1);
-                        }
-                        else if (localPoint.x > 30)
-                        {
-                            Emulator.UpdateKey(0, 1, 0, 7, 1);
-                        }
-                        if (localPoint.y < -30)
-                        {
-                            Emulator.UpdateKey(0, 1, 0, 5, 1);
-                        }
-                        else if (localPoint.y > 30)
-                        {
-                            Emulator.UpdateKey(0, 1, 0, 4, 1);
-                        }
-                    }
+                    processJoypad(rt, pos);
                 }
                 else
                 {
@@ -104,69 +148,29 @@ public class GameScene : MonoSingleton<GameScene>
         }
     }
 
-    // Start is called before the first frame update
-    IEnumerator Start()
+    void processJoypad(RectTransform rt, Vector2 pos)
     {
-        Application.targetFrameRate = 60;
-
-        setupUi();
-        yield return setupFiles();
-        Emulator.Setup();
-
-        RawImage.texture = Emulator.ScreenTexture;
-
-        Emulator.LoadState();
-
-        while (true)
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rt, pos, null, out var localPoint))
         {
-            if (Input.GetKey(KeyCode.S))
+            if (localPoint.x < -30)
             {
-                Emulator.SaveState();
+                Emulator.UpdateKey(0, 1, 0, 6, 1);
             }
-            else if (Input.GetKey(KeyCode.L))
+            else if (localPoint.x > 30)
             {
-                Emulator.LoadState();
+                Emulator.UpdateKey(0, 1, 0, 7, 1);
             }
-            else if (Input.GetKey(KeyCode.R))
+            if (localPoint.y < -30)
             {
-                Emulator.ResetMachine();
+                Emulator.UpdateKey(0, 1, 0, 5, 1);
             }
-
-            updateInput();
-            Emulator.RunOneFrame();
-            yield return null;
+            else if (localPoint.y > 30)
+            {
+                Emulator.UpdateKey(0, 1, 0, 4, 1);
+            }
         }
-
     }
-
-#pragma warning disable CS0618 // WWWを使う
-    IEnumerator download(string url, string savePath)
-    {
-        var request = new WWW(url);
-        yield return request;
-        if( request.error != null)
-        {
-            throw new Exception(request.error);
-        }
-        File.WriteAllBytes(savePath, request.bytes);
-        Debug.Log($"Download {url}");
-    }
-#pragma warning restore CS0618
-
-    IEnumerator setupFiles()
-    {
-        yield return download(Application.streamingAssetsPath + "/castle.nes", Path.Combine(Application.persistentDataPath, "castle.nes"));
-        yield return download(Application.streamingAssetsPath + "/custom.pal", Path.Combine(Application.persistentDataPath, "custom.pal"));
-    }
-
-    TouchArea[] touchAreas_;
-
-    void setupUi()
-    {
-        canvas_ = FindObjectOfType<Canvas>();
-        touchAreas_ = FindObjectsOfType<TouchArea>();
-    }
-
+    
     void OnApplicationQuit()
     {
         Emulator.SaveState();
