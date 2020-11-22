@@ -5,6 +5,7 @@ using System;
 using System.Text;
 using System.Runtime.InteropServices;
 using UnityEngine.UI;
+using UnityEngine.Profiling;
 
 public class TestScene : MonoBehaviour
 {
@@ -77,7 +78,6 @@ public class TestScene : MonoBehaviour
         data[0] = 0;
         data[1] = 0;
         tex_.LoadRawTextureData(new IntPtr((void*)data), (int)(width * height * sizeof(UInt32)));
-        tex_.IncrementUpdateCount();
         tex_.Apply();
     }
 
@@ -94,7 +94,7 @@ public class TestScene : MonoBehaviour
     public static Int16 input_state_callback(UInt32 port, UInt32 device, UInt32 index, UInt32 id)
     {
         //Debug.Log($"input state callback {port} {device} {index} {id}");
-        return 0;
+        return (Int16)KeyInputs[keyIndex((int)port, (int)device, (int)index, (int)id)];
     }
 
     public unsafe static void log_callback(Int32 level, string fmt)
@@ -134,14 +134,53 @@ public class TestScene : MonoBehaviour
         }
     }
 
+    static readonly Dictionary<KeyCode, int> KeyMap = new Dictionary<KeyCode, int> {
+        {KeyCode.UpArrow, 4 },
+        {KeyCode.DownArrow, 5 },
+        {KeyCode.LeftArrow, 6 },
+        {KeyCode.RightArrow, 7 },
+        {KeyCode.X, 8 },
+        {KeyCode.Z, 0 },
+        {KeyCode.Q, 2 },
+        {KeyCode.W, 3 },
+    };
+
+    static int[] KeyInputs = new int[4*2*1*14];
+
+    static int keyIndex(int port, int device, int index, int id)
+    {
+        return ((port * 2  + device ) * 1 + index) * 14 + id;
+    }
+
+    void updateInput()
+    {
+        for( int i=0; i<KeyInputs.Length; i++)
+        {
+            KeyInputs[i] = 0;
+        }
+
+        foreach ( var kv in KeyMap)
+        {
+            if( Input.GetKey(kv.Key))
+            {
+                KeyInputs[keyIndex(0, 1, 0, kv.Value)] = 1;
+            }
+        }
+    }
+
     // Start is called before the first frame update
     IEnumerator Start()
     {
+        Application.targetFrameRate = 60;
+
         setupRetro();
 
         while (true)
         {
+            updateInput();
+            Profiler.BeginSample("retro_run");
             Retro.retro_run();
+            Profiler.EndSample();
             Debug.Log("run");
             yield return null;
         }
