@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using UnityEngine.UI;
 using UnityEngine.Profiling;
 using System.IO;
+using UnityEngine.Networking;
 
 public class TestScene : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class TestScene : MonoBehaviour
     static Texture2D tex_;
     public RawImage RawImage;
 
+    [AOT.MonoPInvokeCallback(typeof(Retro.retro_environment_t))]
     public static unsafe int environment_callback(Retro.Environment cmd, void* data)
     {
 
@@ -82,6 +84,7 @@ public class TestScene : MonoBehaviour
 
     static byte[] texData_ = new byte[256*240*sizeof(UInt32)];
 
+    [AOT.MonoPInvokeCallback(typeof(Retro.retro_video_refresh_t))]
     public static unsafe void video_refresh_callback(UInt32* data, UInt32 width, UInt32 height, UInt64 pitch)
     {
         //Debug.Log($"video callback {width} {height} {pitch}");
@@ -89,22 +92,26 @@ public class TestScene : MonoBehaviour
         tex_.Apply();
     }
 
+    [AOT.MonoPInvokeCallback(typeof(Retro.retro_audio_sample_batch_t))]
     public static unsafe UInt64 audio_sample_batch_callback(UInt16* data, UInt64 frames)
     {
         return 0;
     }
 
+    [AOT.MonoPInvokeCallback(typeof(Retro.retro_input_poll_t))]
     public static void input_poll_callback()
     {
         Debug.Log("input callback");
     }
 
+    [AOT.MonoPInvokeCallback(typeof(Retro.retro_input_state_t))]
     public static Int16 input_state_callback(UInt32 port, UInt32 device, UInt32 index, UInt32 id)
     {
         //Debug.Log($"input state callback {port} {device} {index} {id}");
         return (Int16)KeyInputs[keyIndex((int)port, (int)device, (int)index, (int)id)];
     }
 
+    [AOT.MonoPInvokeCallback(typeof(Retro.retro_log_printf_t))]
     public unsafe static void log_callback(Int32 level, string fmt)
     {
         Debug.Log($"LOG: {fmt}");
@@ -133,7 +140,7 @@ public class TestScene : MonoBehaviour
         Retro.retro_init();
         Debug.Log("retro_init");
 
-        string path = "castle.nes";
+        string path = Path.Combine(Application.persistentDataPath, "castle.nes");
         byte[] rom = System.IO.File.ReadAllBytes(path);
         Retro.retro_game_info gameInfo = new Retro.retro_game_info { path = path, data = rom, size = (UInt64)rom.Length, meta = new byte[0] };
         if (Retro.retro_load_game(gameInfo) == 0)
@@ -181,6 +188,7 @@ public class TestScene : MonoBehaviour
     {
         Application.targetFrameRate = 60;
 
+        yield return setupFiles();
         setupRetro();
 
         load();
@@ -207,6 +215,24 @@ public class TestScene : MonoBehaviour
             Debug.Log("run");
             yield return null;
         }
+    }
+
+    IEnumerator download(string url, string savePath)
+    {
+        var request = new WWW(url);
+        yield return request;
+        if( request.error != null)
+        {
+            throw new Exception(request.error);
+        }
+        File.WriteAllBytes(savePath, request.bytes);
+        Debug.Log($"Download {url}");
+    }
+
+    IEnumerator setupFiles()
+    {
+        yield return download(Application.streamingAssetsPath + "/castle.nes", Path.Combine(Application.persistentDataPath, "castle.nes"));
+        yield return download(Application.streamingAssetsPath + "/custom.pal", Path.Combine(Application.persistentDataPath, "custom.pal"));
     }
 
     void reset()

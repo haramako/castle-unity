@@ -154,7 +154,7 @@ public class Retro
     public static unsafe extern void retro_run();
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-    const string LibRetroDll = "libretro.so";
+    const string LibRetroDll = "retro";
 #else
     const string LibRetroDll = "vs2019.dll";
 #endif
