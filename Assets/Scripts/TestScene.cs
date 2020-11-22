@@ -10,15 +10,15 @@ using System.IO;
 using UnityEngine.Networking;
 using UnityEngine.EventSystems;
 
+#pragma warning disable IDE1006
+
 public class TestScene : MonoBehaviour
 {
-    Retro.nes_ntsc_t ntsc;
-    Retro.nes_ntsc_setup_t setup;
     static Texture2D tex_;
     public RawImage RawImage;
 
-    [AOT.MonoPInvokeCallback(typeof(Retro.retro_environment_t))]
-    public static unsafe int environment_callback(Retro.Environment cmd, void* data)
+    [AOT.MonoPInvokeCallback(typeof(LibRetro.retro_environment_t))]
+    public static unsafe int environment_callback(LibRetro.Environment cmd, void* data)
     {
 
         unsafe
@@ -32,23 +32,23 @@ public class TestScene : MonoBehaviour
 
             switch (cmd)
             {
-                case Retro.Environment.GET_LANGUAGE:
+                case LibRetro.Environment.GET_LANGUAGE:
                     {
                         *((uint*)data) = 1; // Japanese
                         return 1;
                     }
-                case Retro.Environment.GET_CORE_OPTIONS_VERSION:
+                case LibRetro.Environment.GET_CORE_OPTIONS_VERSION:
                     {
                         *((uint*)data) = 1;
                         return 1;
                     }
-                case Retro.Environment.SET_INPUT_DESCRIPTORS:
+                case LibRetro.Environment.SET_INPUT_DESCRIPTORS:
                     {
-                        var input_desc = new Retro.retro_input_descriptor { };
-                        *((Retro.retro_input_descriptor*)data) = input_desc;
+                        var input_desc = new LibRetro.retro_input_descriptor { };
+                        *((LibRetro.retro_input_descriptor*)data) = input_desc;
                         return 1;
                     }
-                case Retro.Environment.GET_SYSTEM_DIRECTORY:
+                case LibRetro.Environment.GET_SYSTEM_DIRECTORY:
                     {
                         var cwd = Encoding.UTF8.GetBytes(System.IO.Directory.GetCurrentDirectory());
                         fixed (byte* cwdPtr = &cwd[0])
@@ -57,17 +57,17 @@ public class TestScene : MonoBehaviour
                         }
                         return 1;
                     }
-                case Retro.Environment.GET_LOG_INTERFACE:
+                case LibRetro.Environment.GET_LOG_INTERFACE:
                     {
-                        var func = Marshal.GetFunctionPointerForDelegate<Retro.retro_log_printf_t>(log_callback);
-                        *((Retro.retro_log_callback*)data) = new Retro.retro_log_callback { log = func };
+                        var func = Marshal.GetFunctionPointerForDelegate<LibRetro.retro_log_printf_t>(log_callback);
+                        *((LibRetro.retro_log_callback*)data) = new LibRetro.retro_log_callback { log = func };
                         return 1;
                     }
-                case Retro.Environment.SET_PIXEL_FORMAT:
+                case LibRetro.Environment.SET_PIXEL_FORMAT:
                     {
                         return 1;
                     }
-                case Retro.Environment.GET_SAVE_DIRECTORY:
+                case LibRetro.Environment.GET_SAVE_DIRECTORY:
                     {
                         var dir = Encoding.UTF8.GetBytes(Application.persistentDataPath);
                         fixed (byte* cwdPtr = &dir[0])
@@ -83,9 +83,7 @@ public class TestScene : MonoBehaviour
         }
     }
 
-    static byte[] texData_ = new byte[256*240*sizeof(UInt32)];
-
-    [AOT.MonoPInvokeCallback(typeof(Retro.retro_video_refresh_t))]
+    [AOT.MonoPInvokeCallback(typeof(LibRetro.retro_video_refresh_t))]
     public static unsafe void video_refresh_callback(UInt32* data, UInt32 width, UInt32 height, UInt64 pitch)
     {
         //Debug.Log($"video callback {width} {height} {pitch}");
@@ -93,26 +91,26 @@ public class TestScene : MonoBehaviour
         tex_.Apply();
     }
 
-    [AOT.MonoPInvokeCallback(typeof(Retro.retro_audio_sample_batch_t))]
+    [AOT.MonoPInvokeCallback(typeof(LibRetro.retro_audio_sample_batch_t))]
     public static unsafe UInt64 audio_sample_batch_callback(UInt16* data, UInt64 frames)
     {
         return 0;
     }
 
-    [AOT.MonoPInvokeCallback(typeof(Retro.retro_input_poll_t))]
+    [AOT.MonoPInvokeCallback(typeof(LibRetro.retro_input_poll_t))]
     public static void input_poll_callback()
     {
         Debug.Log("input callback");
     }
 
-    [AOT.MonoPInvokeCallback(typeof(Retro.retro_input_state_t))]
+    [AOT.MonoPInvokeCallback(typeof(LibRetro.retro_input_state_t))]
     public static Int16 input_state_callback(UInt32 port, UInt32 device, UInt32 index, UInt32 id)
     {
         //Debug.Log($"input state callback {port} {device} {index} {id}");
         return (Int16)KeyInputs[keyIndex((int)port, (int)device, (int)index, (int)id)];
     }
 
-    [AOT.MonoPInvokeCallback(typeof(Retro.retro_log_printf_t))]
+    [AOT.MonoPInvokeCallback(typeof(LibRetro.retro_log_printf_t))]
     public unsafe static void log_callback(Int32 level, string fmt)
     {
         Debug.Log($"LOG: {fmt}");
@@ -125,26 +123,26 @@ public class TestScene : MonoBehaviour
         //tex_ = new Texture2D(256, 240, TextureFormat.R8, false);
         RawImage.texture = tex_;
 
-        Retro.retro_set_environment(environment_callback);
+        LibRetro.retro_set_environment(environment_callback);
         Debug.Log("set_environment");
 
-        Retro.retro_set_video_refresh(video_refresh_callback);
+        LibRetro.retro_set_video_refresh(video_refresh_callback);
         Debug.Log("set_video_refresh");
 
-        Retro.retro_set_audio_sample_batch(audio_sample_batch_callback);
+        LibRetro.retro_set_audio_sample_batch(audio_sample_batch_callback);
         Debug.Log("set_audio_sample_batch");
 
-        Retro.retro_set_input_poll(input_poll_callback);
+        LibRetro.retro_set_input_poll(input_poll_callback);
 
-        Retro.retro_set_input_state(input_state_callback);
+        LibRetro.retro_set_input_state(input_state_callback);
 
-        Retro.retro_init();
+        LibRetro.retro_init();
         Debug.Log("retro_init");
 
         string path = Path.Combine(Application.persistentDataPath, "castle.nes");
         byte[] rom = System.IO.File.ReadAllBytes(path);
-        Retro.retro_game_info gameInfo = new Retro.retro_game_info { path = path, data = rom, size = (UInt64)rom.Length, meta = new byte[0] };
-        if (Retro.retro_load_game(gameInfo) == 0)
+        LibRetro.retro_game_info gameInfo = new LibRetro.retro_game_info { path = path, data = rom, size = (UInt64)rom.Length, meta = new byte[0] };
+        if (LibRetro.retro_load_game(gameInfo) == 0)
         {
             Debug.LogError("Load failed");
         }
@@ -184,16 +182,6 @@ public class TestScene : MonoBehaviour
         }
 
         updateTouch();
-
-#if false
-        foreach (var touchArea in touchAreas_)
-        {
-            if (touchArea.IsPushed())
-            {
-                KeyInputs[keyIndex(0, 1, 0, touchArea.ButtonId)] = 1;
-            }
-        }
-#endif
     }
 
 
@@ -285,7 +273,7 @@ public class TestScene : MonoBehaviour
 
             updateInput();
             Profiler.BeginSample("retro_run");
-            Retro.retro_run();
+            LibRetro.retro_run();
             Profiler.EndSample();
             Debug.Log("run");
             yield return null;
@@ -293,6 +281,7 @@ public class TestScene : MonoBehaviour
 
     }
 
+#pragma warning disable CS0618 // WWWを使う
     IEnumerator download(string url, string savePath)
     {
         var request = new WWW(url);
@@ -304,6 +293,7 @@ public class TestScene : MonoBehaviour
         File.WriteAllBytes(savePath, request.bytes);
         Debug.Log($"Download {url}");
     }
+#pragma warning restore CS0618
 
     IEnumerator setupFiles()
     {
@@ -321,7 +311,7 @@ public class TestScene : MonoBehaviour
 
     void reset()
     {
-        Retro.retro_reset();
+        LibRetro.retro_reset();
     }
 
     string savePath()
@@ -331,9 +321,9 @@ public class TestScene : MonoBehaviour
 
     void save()
     {
-        var len = Retro.retro_serialize_size();
+        var len = LibRetro.retro_serialize_size();
         var buf = new byte[len];
-        if( !Retro.retro_serialize(buf, len))
+        if( !LibRetro.retro_serialize(buf, len))
         {
             throw new Exception("Serialize failed");
         }
@@ -348,9 +338,9 @@ public class TestScene : MonoBehaviour
             return;
         }
 
-        var len = Retro.retro_serialize_size();
+        var len = LibRetro.retro_serialize_size();
         var buf = File.ReadAllBytes(savePath());
-        if ( !Retro.retro_unserialize(buf, len))
+        if ( !LibRetro.retro_unserialize(buf, len))
         {
             throw new Exception("Unserialize failed");
         }

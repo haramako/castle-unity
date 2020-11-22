@@ -5,10 +5,15 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System;
 
-public class Retro
+#pragma warning disable IDE1006
+
+public class LibRetro
 {
-    public const int nes_ntsc_palette_size = 64 * 8;
-    public const int nes_ntsc_entry_size = 128;
+#if UNITY_ANDROID && !UNITY_EDITOR
+    const string LibRetroDll = "retro";
+#else
+    const string LibRetroDll = "vs2019.dll";
+#endif
 
     public enum Environment
     {
@@ -83,38 +88,6 @@ public class Retro
         public byte[] meta;
     };
 
-    public unsafe struct nes_ntsc_t
-    {
-        fixed long table[Retro.nes_ntsc_palette_size * Retro.nes_ntsc_entry_size];
-    }
-
-    public struct nes_ntsc_setup_t
-    {
-        /* Basic parameters */
-        double hue;        /* -1 = -180 degrees     +1 = +180 degrees */
-        double saturation; /* -1 = grayscale (0.0)  +1 = oversaturated colors (2.0) */
-        double contrast;   /* -1 = dark (0.5)       +1 = light (1.5) */
-        double brightness; /* -1 = dark (0.5)       +1 = light (1.5) */
-        double sharpness;  /* edge contrast enhancement/blurring */
-
-        /* Advanced parameters */
-        double gamma;      /* -1 = dark (1.5)       +1 = light (0.5) */
-        double resolution; /* image resolution */
-        double artifacts;  /* artifacts caused by color changes */
-        double fringing;   /* color artifacts caused by brightness changes */
-        double bleed;      /* color bleed (color resolution reduction) */
-        int merge_fields;  /* if 1, merges even and odd fields together to reduce flicker */
-        long /*float const* */ decoder_matrix; /* optional RGB decoder matrix, 6 elements */
-
-        long /*char* */ palette_out;  /* optional RGB palette out, 3 bytes per color */
-
-        /* You can replace the standard NES color generation with an RGB palette. The
-        first replaces all color generation, while the second replaces only the core
-        64-color generation and does standard color emphasis calculations on it. */
-        long /*char const* */ palette;/* optional 512-entry RGB palette in, 3 bytes per color */
-        long /* char const* */ base_palette;/* optional 64-entry RGB palette in, 3 bytes per color */
-    }
-
     public unsafe struct retro_input_descriptor
     {
         public UInt32 port;
@@ -152,15 +125,6 @@ public class Retro
 
     [DllImport(LibRetroDll)]
     public static unsafe extern void retro_run();
-
-#if UNITY_ANDROID && !UNITY_EDITOR
-    const string LibRetroDll = "retro";
-#else
-    const string LibRetroDll = "vs2019.dll";
-#endif
-
-    [DllImport(LibRetroDll)]
-    public static unsafe extern void nes_ntsc_init(ref nes_ntsc_t ntsc, ref nes_ntsc_setup_t setup);
 
     [DllImport(LibRetroDll)]
     public static extern void retro_set_environment(retro_environment_t callback);
