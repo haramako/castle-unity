@@ -181,13 +181,28 @@ public class TestScene : MonoBehaviour
                 KeyInputs[keyIndex(0, 1, 0, kv.Value)] = 1;
             }
         }
+
+        foreach (var touchArea in touchAreas_)
+        {
+            if (touchArea.IsPushed())
+            {
+                KeyInputs[keyIndex(0, 1, 0, touchArea.ButtonId)] = 1;
+            }
+        }
     }
 
     // Start is called before the first frame update
     IEnumerator Start()
     {
+        Screen.orientation = ScreenOrientation.Landscape; // For unity remote
+        if (Application.isEditor)
+        {
+            Screen.orientation = ScreenOrientation.Landscape; // For unity remote
+        }
+
         Application.targetFrameRate = 60;
 
+        setupUi();
         yield return setupFiles();
         setupRetro();
 
@@ -215,6 +230,7 @@ public class TestScene : MonoBehaviour
             Debug.Log("run");
             yield return null;
         }
+
     }
 
     IEnumerator download(string url, string savePath)
@@ -233,6 +249,13 @@ public class TestScene : MonoBehaviour
     {
         yield return download(Application.streamingAssetsPath + "/castle.nes", Path.Combine(Application.persistentDataPath, "castle.nes"));
         yield return download(Application.streamingAssetsPath + "/custom.pal", Path.Combine(Application.persistentDataPath, "custom.pal"));
+    }
+
+    TouchArea[] touchAreas_;
+
+    void setupUi()
+    {
+        touchAreas_ = GameObject.FindObjectsOfType<TouchArea>();
     }
 
     void reset()
