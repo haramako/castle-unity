@@ -153,7 +153,11 @@ public class Retro
     [DllImport(LibRetroDll)]
     public static unsafe extern void retro_run();
 
+#if UNITY_ANDROID && !UNITY_EDITOR
+    const string LibRetroDll = "libretro.so";
+#else
     const string LibRetroDll = "vs2019.dll";
+#endif
 
     [DllImport(LibRetroDll)]
     public static unsafe extern void nes_ntsc_init(ref nes_ntsc_t ntsc, ref nes_ntsc_setup_t setup);
@@ -172,6 +176,20 @@ public class Retro
 
     [DllImport(LibRetroDll)]
     public static extern void retro_set_input_state(retro_input_state_t callback);
+
+    [DllImport(LibRetroDll)]
+    public static extern void retro_reset();
+
+    [DllImport(LibRetroDll)]
+    public static extern UInt64 retro_serialize_size();
+
+    [DllImport(LibRetroDll)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool retro_serialize([MarshalAs(UnmanagedType.LPArray), Out] byte[] data, UInt64 size);
+
+    [DllImport(LibRetroDll)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool retro_unserialize([MarshalAs(UnmanagedType.LPArray), In] byte[] data, UInt64 size);
 
     [DllImport(LibRetroDll)]
     [return: MarshalAs(UnmanagedType.Bool)]

@@ -6,6 +6,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using UnityEngine.UI;
 using UnityEngine.Profiling;
+using System.IO;
 
 public class TestScene : MonoBehaviour
 {
@@ -63,6 +64,15 @@ public class TestScene : MonoBehaviour
                     {
                         return 1;
                     }
+                case Retro.Environment.GET_SAVE_DIRECTORY:
+                    {
+                        var dir = Encoding.UTF8.GetBytes(Application.persistentDataPath);
+                        fixed (byte* cwdPtr = &dir[0])
+                        {
+                            *((byte**)data) = cwdPtr;
+                        }
+                        return 1;
+                    }
                 default:
                     Debug.LogWarning($"Unknown CMD {cmd} {d}");
                     return 0;
@@ -74,9 +84,7 @@ public class TestScene : MonoBehaviour
 
     public static unsafe void video_refresh_callback(UInt32* data, UInt32 width, UInt32 height, UInt64 pitch)
     {
-        Debug.Log($"video callback {width} {height} {pitch}");
-        data[0] = 0;
-        data[1] = 0;
+        //Debug.Log($"video callback {width} {height} {pitch}");
         tex_.LoadRawTextureData(new IntPtr((void*)data), (int)(width * height * sizeof(UInt32)));
         tex_.Apply();
     }
@@ -175,8 +183,23 @@ public class TestScene : MonoBehaviour
 
         setupRetro();
 
+        load();
+
         while (true)
         {
+            if (Input.GetKey(KeyCode.S))
+            {
+                save();
+            }
+            else if (Input.GetKey(KeyCode.L))
+            {
+                load();
+            }
+            else if (Input.GetKey(KeyCode.R))
+            {
+                reset();
+            }
+
             updateInput();
             Profiler.BeginSample("retro_run");
             Retro.retro_run();
@@ -184,5 +207,48 @@ public class TestScene : MonoBehaviour
             Debug.Log("run");
             yield return null;
         }
+    }
+
+    void reset()
+    {
+        Retro.retro_reset();
+    }
+
+    string savePath()
+    {
+        return Path.Combine(Application.persistentDataPath, "save.dat");
+    }
+
+    void save()
+    {
+        var len = Retro.retro_serialize_size();
+        var buf = new byte[len];
+        if( !Retro.retro_serialize(buf, len))
+        {
+            throw new Exception("Serialize failed");
+        }
+        File.WriteAllBytes(savePath(), buf);
+        Debug.Log($"save {len}");
+    }
+
+    void load()
+    {
+        if( !File.Exists(savePath()))
+        {
+            return;
+        }
+
+        var len = Retro.retro_serialize_size();
+        var buf = File.ReadAllBytes(savePath());
+        if ( !Retro.retro_unserialize(buf, len))
+        {
+            throw new Exception("Unserialize failed");
+        }
+        Debug.Log($"load {len}");
+    }
+
+    void OnApplicationQuit()
+    {
+        save();
     }
 }
