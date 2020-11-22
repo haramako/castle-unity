@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.Profiling;
 using System.IO;
 using UnityEngine.Networking;
+using UnityEngine.EventSystems;
 
 public class TestScene : MonoBehaviour
 {
@@ -182,6 +183,9 @@ public class TestScene : MonoBehaviour
             }
         }
 
+        updateTouch();
+
+#if false
         foreach (var touchArea in touchAreas_)
         {
             if (touchArea.IsPushed())
@@ -189,17 +193,73 @@ public class TestScene : MonoBehaviour
                 KeyInputs[keyIndex(0, 1, 0, touchArea.ButtonId)] = 1;
             }
         }
+#endif
+    }
+
+
+    void updateTouch()
+    {
+        var canvas = FindObjectOfType<Canvas>();
+        foreach (var t in Input.touches)
+        {
+            var pos = t.position;
+            Debug.LogError($"touch {t.fingerId}");
+            touchButton(pos);
+        }
+
+        if (Input.GetMouseButton(0))
+        {
+            touchButton(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
+        }
+
+    }
+
+    Canvas canvas_;
+
+    void touchButton(Vector2 pos)
+    {
+        //Debug.LogError(pos);
+        //var ray = canvas.worldCamera.ScreenPointToRay(pos);
+        var raycaster = canvas_.GetComponent<GraphicRaycaster>();
+        foreach (var touchArea in touchAreas_)
+        {
+            var rt = touchArea.GetComponent<RectTransform>();
+            var contains = RectTransformUtility.RectangleContainsScreenPoint(rt, pos);
+            if (contains)
+            {
+                if (touchArea.ButtonId == -1)
+                {
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rt, pos, null, out var localPoint))
+                    {
+                        if (localPoint.x < -30)
+                        {
+                            KeyInputs[keyIndex(0, 1, 0, 6)] = 1;
+                        }
+                        else if(localPoint.x > 30 )
+                        {
+                            KeyInputs[keyIndex(0, 1, 0, 7)] = 1;
+                        }
+                        if (localPoint.y < -30)
+                        {
+                            KeyInputs[keyIndex(0, 1, 0, 5)] = 1;
+                        }
+                        else if (localPoint.y > 30)
+                        {
+                            KeyInputs[keyIndex(0, 1, 0, 4)] = 1;
+                        }
+                    }
+                }
+                else
+                {
+                    KeyInputs[keyIndex(0, 1, 0, touchArea.ButtonId)] = 1;
+                }
+            }
+        }
     }
 
     // Start is called before the first frame update
     IEnumerator Start()
     {
-        Screen.orientation = ScreenOrientation.Landscape; // For unity remote
-        if (Application.isEditor)
-        {
-            Screen.orientation = ScreenOrientation.Landscape; // For unity remote
-        }
-
         Application.targetFrameRate = 60;
 
         setupUi();
@@ -255,7 +315,8 @@ public class TestScene : MonoBehaviour
 
     void setupUi()
     {
-        touchAreas_ = GameObject.FindObjectsOfType<TouchArea>();
+        canvas_ = FindObjectOfType<Canvas>();
+        touchAreas_ = FindObjectsOfType<TouchArea>();
     }
 
     void reset()
@@ -300,4 +361,18 @@ public class TestScene : MonoBehaviour
     {
         save();
     }
+
+    private void OnApplicationPause(bool pause)
+    {
+        if( pause)
+        {
+            save();
+        }
+    }
+
+    public void OnResetButtonClick()
+    {
+        reset();
+    }
+
 }

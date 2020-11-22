@@ -14,13 +14,13 @@ public class TouchArea : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.LogError($"Enter {eventData.pointerId}");
+        //Debug.LogError($"Enter {eventData.pointerId}");
         pointerId_ = eventData.pointerId;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.LogError($"Exit {eventData.pointerId}");
+        //Debug.LogError($"Exit {eventData.pointerId}");
         pointerId_ = -99;
     }
 
