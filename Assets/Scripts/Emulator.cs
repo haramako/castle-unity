@@ -11,7 +11,11 @@ using UnityEngine.Profiling;
 
 public class Emulator : MonoSingleton<Emulator>
 {
+    public static bool LogEnabled = false;
+    public static bool LogAllMessageEnabled = false;
+
     int[] KeyInputs = new int[4 * 2 * 1 * 14];
+    static HashSet<LibRetro.Environment> UnknownMessageWarned = new HashSet<LibRetro.Environment>();
 
     public Texture2D ScreenTexture { get; private set; }
 
@@ -26,7 +30,11 @@ public class Emulator : MonoSingleton<Emulator>
             {
                 d = (UInt64)new IntPtr(data).ToInt64();
             }
-            Debug.Log($"CMD {cmd} {d}");
+
+            if (LogAllMessageEnabled)
+            {
+                Debug.Log($"CMD {cmd} {d}");
+            }
 
             switch (cmd)
             {
@@ -75,7 +83,11 @@ public class Emulator : MonoSingleton<Emulator>
                         return 1;
                     }
                 default:
-                    Debug.LogWarning($"Unknown CMD {cmd} {d}");
+                    if (!UnknownMessageWarned.Contains(cmd))
+                    {
+                        UnknownMessageWarned.Add(cmd);
+                        Debug.LogWarning($"Unknown CMD {cmd} {d}");
+                    }
                     return 0;
             }
         }
@@ -95,10 +107,18 @@ public class Emulator : MonoSingleton<Emulator>
         return 0;
     }
 
+    public static void log(string message)
+    {
+        if (LogEnabled)
+        {
+            Debug.Log(message);
+        }
+    }
+
     [AOT.MonoPInvokeCallback(typeof(LibRetro.retro_input_poll_t))]
     public static void input_poll_callback()
     {
-        Debug.Log("input callback");
+        log("input_poll callback");
     }
 
     [AOT.MonoPInvokeCallback(typeof(LibRetro.retro_input_state_t))]
@@ -111,7 +131,7 @@ public class Emulator : MonoSingleton<Emulator>
     [AOT.MonoPInvokeCallback(typeof(LibRetro.retro_log_printf_t))]
     public unsafe static void log_callback(Int32 level, string fmt)
     {
-        Debug.Log($"LOG: {fmt}");
+        log($"LOG: {fmt}");
     }
 
     public unsafe void Setup()
@@ -120,20 +140,20 @@ public class Emulator : MonoSingleton<Emulator>
         //tex_ = new Texture2D(256, 240, TextureFormat.R8, false);
 
         LibRetro.retro_set_environment(environment_callback);
-        Debug.Log("set_environment");
+        log("set_environment");
 
         LibRetro.retro_set_video_refresh(video_refresh_callback);
-        Debug.Log("set_video_refresh");
+        log("set_video_refresh");
 
         LibRetro.retro_set_audio_sample_batch(audio_sample_batch_callback);
-        Debug.Log("set_audio_sample_batch");
+        log("set_audio_sample_batch");
 
         LibRetro.retro_set_input_poll(input_poll_callback);
 
         LibRetro.retro_set_input_state(input_state_callback);
 
         LibRetro.retro_init();
-        Debug.Log("retro_init");
+        log("retro_init");
 
         string path = Path.Combine(Application.persistentDataPath, "castle.nes");
         byte[] rom = System.IO.File.ReadAllBytes(path);
@@ -188,7 +208,7 @@ public class Emulator : MonoSingleton<Emulator>
             throw new Exception("Serialize failed");
         }
         File.WriteAllBytes(savePath(), buf);
-        Debug.Log($"save {len}");
+        Debug.Log($"save len={len}");
     }
 
     public void LoadState()
@@ -204,7 +224,7 @@ public class Emulator : MonoSingleton<Emulator>
         {
             throw new Exception("Unserialize failed");
         }
-        Debug.Log($"load {len}");
+        Debug.Log($"load len={len}");
     }
 
 
