@@ -1,0 +1,175 @@
+Initiating legacy licensing module
+
+LICENSE SYSTEM [20201123 16:17:6] Next license update check is after 2020-07-31T07:36:07
+
+Built from '2018.4/staging' branch; Version is '2018.4.14f1 (05119b33d0b7) revision 332187'; Using compiler version '191326128'
+OS: 'Windows 10  (10.0.0) 64bit' Language: 'ja' Physical Memory: 16314 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1, IsPro: 1
+[Package Manager] Server::Start -- Port 53262 was selected
+
+ COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity2018.4.14f1\Editor\Unity.exe
+-batchMode
+-quit
+-projectPath
+.
+-logFile
+Build.log
+-executeMethod
+AppBuilder.Build
+-target
+StandaloneWindows64
+
+-keyalias
+aeVo6ien
+-buildVersion
+1.0.4
+-buildNumber
+0
+-outputpath
+AppBuilder
+Successfully changed project path to: C:/Work/castle-unity
+C:/Work/castle-unity
+Using Asset Import Pipeline V1.
+Initiating legacy licensing module
+Rebuilding Library because the asset database could not be found!
+Failed to load 'C:/Work/castle-unity/library/scriptmapper' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/scriptmapper' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/scriptmapper' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Build target: OSXUniversal found and added!
+Build target: WindowsStoreApps found and added!
+Build target: Win64 found and added!
+Build target: Win found and added!
+Build target: LinuxUniversal found and added!
+Build target: Linux64 found and added!
+Build target: Linux found and added!
+Build target: iOS found and added!
+Build target: tvOS found and added!
+Build target: PS4 found and added!
+Build target: XboxOne found and added!
+Build target: Android found and added!
+Build target: WebGL found and added!
+Build target: Switch found and added!
+Build target: Lumin found and added!
+Build target: PSM found and added!
+Build target: PSP2 found and added!
+Build target: WiiU found and added!
+Build target: Web found and added!
+Build target: WebStreamed found and added!
+Build target: OSXIntel found and added!
+Build target: OSXIntel64 found and added!
+Build target: BlackBerry found and added!
+Build target: PS3 found and added!
+Build target: N3DS found and added!
+Build target: WP8 found and added!
+Build target: SamsungTV found and added!
+Build target: Tizen found and added!
+Failed to load 'C:/Work/castle-unity/library/monomanager.asset' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/monomanager.asset' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/monomanager.asset' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/buildsettings.asset' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/buildsettings.asset' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/buildsettings.asset' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/inspectorexpandeditems.asset' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/inspectorexpandeditems.asset' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/inspectorexpandeditems.asset' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/annotationmanager' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/annotationmanager' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/annotationmanager' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/editoruserbuildsettings.asset' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/editoruserbuildsettings.asset' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/editoruserbuildsettings.asset' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/spriteatlasdatabase.asset' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/spriteatlasdatabase.asset' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Failed to load 'C:/Work/castle-unity/library/spriteatlasdatabase.asset' because it was serialized with a newer version of Unity. (Has a higher SerializedFile version)
+ 
+(Filename: C:\buildslave\unity\build\Runtime/Serialize/SerializedFile.cpp Line: 214)
+
+Loading GUID <-> Path mappings...0.000052 seconds
+Loading Asset Database...0.000012 seconds
+AssetDatabase consistency checks...0.000944 seconds
+Refreshing native plugins compatible for Editor in 0.01 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+DisplayProgressbar: Unity Package Manager
+[Package Manager] Server::CheckExitCode -- Server stopped with exit code `101`
+[Package Manager] PackageManager Server::Start -- Process restart attempt #2
+
+[Package Manager] Server::Start -- Port 53265 was selected
+[Package Manager] Server::CheckExitCode -- Server stopped with exit code `101`
+[Package Manager] PackageManager Server::Start -- Process restart attempt #3
+
+[Package Manager] Server::Start -- Port 63638 was selected
+[Package Manager] Cannot connect to Unity Package Manager local server
+[Package Manager] Cannot connect to Unity Package Manager local server
+[Package Manager] Done resolving packages in 22.88s seconds
+An error occurred while resolving packages:
+  Project has invalid dependencies:
+    com.unity.2d.sprite: connect ETIMEDOUT 35.238.21.138:443
+    com.unity.modules.androidjni: connect ETIMEDOUT 35.238.21.138:443
+    com.unity.ugui: connect ETIMEDOUT 35.238.21.138:443
+
+A re-import of the project may be required to fix the issue or a manual modification of C:/Work/castle-unity/Packages/manifest.json file.
+ 
+(Filename:  Line: 0)
+
+Exiting without the bug reporter. Application will terminate with return code 1

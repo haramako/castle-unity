@@ -4,6 +4,7 @@ Logs
 Library
 Temp
 UserSettings
+/AppBuilder
 *.csproj
 *.sln
 *.apk

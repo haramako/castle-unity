@@ -7,5 +7,5 @@ using System.Linq;
 
 public class TouchArea : MonoBehaviour
 {
-    public int ButtonId; // -1: 十字キー, それ以外: ボタン番号
+	public int ButtonId; // -1: 十字キー, それ以外: ボタン番号
 }
