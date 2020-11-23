@@ -15,8 +15,6 @@ require 'pathname'
 
 require 'rake_common'
 require 'path_detector'
-# require 'deploy_mate'
-# require 'conv_env'
 
 detect_fullclean
 
@@ -40,6 +38,9 @@ UNITY_PROJECT = PROJECT_ROOT
 TEMP = Pathname.new('Temp')
 DATA_DIR = Pathname.new('Data')
 OUTPUT = TEMP + 'DataOutput'
+
+DEPLOYGATE_USER = ENV['DEPLOYGATE_USER']
+DEPLOYGATE_TOKEN = ENV['DEPLOYGATE_TOKEN']
 
 Dir.glob('Tools/Rakefiles/*.rake').each do |f|
   load f
