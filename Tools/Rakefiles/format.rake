@@ -22,7 +22,7 @@ namespace :format do
   desc '*.rbファイルを整形する'
   task :ruby do
     raise '文字コードをUTF-8にしてください(chcp 65001 など)' if Encoding.default_external != Encoding::UTF_8
+
     sh 'rubocop', '-a', 'Tools', 'Rakefile', *FileList['Tools/Rakefiles/*.rake']
   end
-
 end

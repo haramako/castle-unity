@@ -5,22 +5,22 @@ using UnityEngine.UI;
 
 public class ControlBox : MonoBehaviour
 {
-    public RawImage ScreenImage;
+	public RawImage ScreenImage;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+	// Start is called before the first frame update
+	void Start()
+	{
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	}
 
-    public void OnMenuButtonClick()
-    {
-        GameScene.Instance.MainMenu.Open();
-    }
+	// Update is called once per frame
+	void Update()
+	{
+
+	}
+
+	public void OnMenuButtonClick()
+	{
+		GameScene.Instance.MainMenu.Open();
+	}
 }

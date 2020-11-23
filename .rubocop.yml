@@ -3,24 +3,25 @@ inherit_from: .rubocop_todo.yml
 # 50音順にならべること
 
 AllCops:
+  NewCops: enable
   UseCache: true
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.7
   DisplayCopNames: true
   Include:
-    - '**/Rakefile'
+    - "**/Rakefile"
   Exclude:
-    - '**/*.tab.rb' # Raccの出力ファイル
-    - '**/*_pb.rb' # protocの出力ファイル
+    - "**/*.tab.rb" # Raccの出力ファイル
+    - "**/*_pb.rb" # protocの出力ファイル
 
 # heredoc のスタイルを <<~ に統一
-Layout/IndentHeredoc:
-  EnforcedStyle: squiggly
+Layout/HeredocIndentation:
+  Enabled: true
 
 # Rakefile のファイル名は例外
-Style/FileName:
+Naming/FileName:
   Exclude:
-    - '**/Rakefile'
-    - '**/Gemfile'
+    - "**/Rakefile"
+    - "**/Gemfile"
 
 # get/set で始まるメソッド名を禁止しない
 Style/AccessorMethodName:
@@ -33,7 +34,7 @@ Style/AsciiComments:
 # and/or のかわりに &&/|| を強制しない
 Style/AndOr:
   Enabled: false
-  
+
 # 下記変換をやめる（インデントが統一しにくいため）
 # if x
 #   a = 1
@@ -52,7 +53,7 @@ Style/ConditionalAssignment:
 # class ModuleName::ClassName という書き方を禁止しない
 Style/ClassAndModuleChildren:
   Enabled: false
-  
+
 # 空のelse句を禁止しない
 Style/EmptyElse:
   Enabled: false
@@ -60,12 +61,12 @@ Style/EmptyElse:
 # format/sprintf/% のいずれでもよい
 Style/FormatString:
   Enabled: false
-  
+
 # Rakefile は 古いHashスタイルのほうが自然なので、排除
 Style/HashSyntax:
   Exclude:
-    - '**/*.rake'
-    - '**/Rakefile'
+    - "**/*.rake"
+    - "**/Rakefile"
 
 # "hoge".freezeを強制しない
 Style/MutableConstant:
@@ -74,11 +75,11 @@ Style/MutableConstant:
 # [:a, :b] => %i{a b} を強制しない
 Style/SymbolArray:
   Enabled: false
-  
+
 # x == 0 のかわりに x.zero? は強制しない
 Style/NumericPredicate:
   Enabled: false
-  
+
 # $1, $! などは使用して良い
 Style/PerlBackrefs:
   Enabled: false
@@ -94,11 +95,11 @@ Style/RescueModifier:
 # ブロックの長さ制限
 Metrics/BlockLength:
   Max: 80
-  
+
 # クラスの長さ制限
 Metrics/ClassLength:
   Max: 1000
-  
+
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
 # URISchemes: http, https
 Metrics/LineLength:
@@ -121,3 +122,5 @@ Style/GuardClause:
 Style/SpecialGlobalVars:
   Enabled: false
 
+Style/StringConcatenation:
+  Enabled: false

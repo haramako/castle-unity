@@ -35,11 +35,7 @@ TARGET_PLATFORMS = %w[
 
 def get_target_platform(name)
   platform = TARGET_PLATFORM_ALIASES[name.downcase]
-  if platform
-    platform
-  else
-    raise "不正なプラットフォームです, platform=#{name}。 有効な指定は #{TARGET_PLATFORM_ALIASES.values.join(',')} です"
-  end
+  platform || raise("不正なプラットフォームです, platform=#{name}。 有効な指定は #{TARGET_PLATFORM_ALIASES.values.join(',')} です")
 end
 
 def get_asset_bundle_platform(platform)
@@ -56,5 +52,3 @@ class String
     tr('/', '\\')
   end
 end
-
-

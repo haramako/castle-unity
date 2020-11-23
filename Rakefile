@@ -1,6 +1,4 @@
-# coding: utf-8
 # frozen_string_literal: true
-
 
 #
 # Rakefile
@@ -25,9 +23,10 @@ detect_fullclean
 # 実行ファイルのパス/拡張子
 exe = ''
 bin = 'Bin'
-if RUBY_PLATFORM =~ /darwin/
+case RUBY_PLATFORM
+when /darwin/
   # DO NOTHING
-elsif RUBY_PLATFORM =~ /linux/
+when /linux/
   bin = 'Bin/Linux'
 else
   exe = '.exe'
