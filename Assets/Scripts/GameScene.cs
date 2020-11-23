@@ -137,7 +137,7 @@ public class GameScene : MonoSingleton<GameScene>
 		foreach (var touchArea in touchAreas_)
 		{
 			var rt = touchArea.GetComponent<RectTransform>();
-			var contains = RectTransformUtility.RectangleContainsScreenPoint(rt, pos);
+			var contains = RectTransformUtility.RectangleContainsScreenPoint(rt, pos, canvas_.worldCamera);
 			if (contains)
 			{
 				if (touchArea.ButtonId == -1)
@@ -203,6 +203,10 @@ public class GameScene : MonoSingleton<GameScene>
 		CurrentControlBox.gameObject.SetActive(true);
 		CurrentControlBox.ScreenImage.texture = Emulator.ScreenTexture;
 		touchAreas_ = CurrentControlBox.gameObject.GetComponentsInChildren<TouchArea>();
+		foreach( var t in touchAreas_)
+		{
+			Debug.Log(t);
+		}
 	}
 
 }

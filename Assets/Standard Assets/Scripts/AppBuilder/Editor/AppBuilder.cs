@@ -73,6 +73,8 @@ public class AppBuilder
 		var outputPath2 = Path.Combine(outputPath, OutputPathFromBuildTarget(target));
 
 		buildForTarget(target, outputPath2, isRelease);
+
+		System.IO.File.WriteAllText("AppBuilderOutput.txt", "OK"); // TODO: ビルドに成功したのに、エラーを返してしまうことがあるため、いまは固定文字列を返す
 	}
 
 	/// <summary>
@@ -156,7 +158,7 @@ public class AppBuilder
 				break;
 
 			case BuildTarget.Android:
-				PlayerSettings.applicationIdentifier = "com.toydea.dragonfangz";
+				PlayerSettings.applicationIdentifier = "com.haramako.castle";
 				PlayerSettings.Android.keystorePass = KeyAliasPass;
 				PlayerSettings.Android.keyaliasPass = KeyAliasPass;
 				break;

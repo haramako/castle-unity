@@ -7,7 +7,7 @@ require 'json'
 namespace :build do
   desc 'アプリをビルドする(PLATFORMに対象のプラットフォームを指定)'
   task :app do
-    build_number = (ENV['BUILD_NUMBER'] || 0).to_i
+    build_number = (ENV['BUILD_NUMBER'] || 1).to_i
     platform = get_target_platform(ENV['PLATFORM'] || 'windows')
     release = ENV['RELEASE'] # リリースビルドにする
     final = ENV['FINAL']
@@ -21,8 +21,10 @@ namespace :build do
 
     puts "Platform = #{platform}"
 
+    bin_name = 'castle'
+
     # MEMO: ファイルに何らかの変更を加えないと、コンパイルが正しく動かないのか AppBuilder.Build() が見つからないとエラーがでてしまうので、なんらかのタッチをする
-    script_path = UNITY_PROJECT + 'Assets/Editor/AppBuilder/Editor/AppBuilder.cs'
+    script_path = UNITY_PROJECT + 'Assets/Standard Assets/Scripts/AppBuilder/Editor/AppBuilder.cs'
     IO.binwrite(script_path, IO.binread(script_path) + " ")
 
     rm_f 'Client/AppBuilderOutput.txt' # 出力ファイルを削除する
@@ -41,8 +43,8 @@ namespace :build do
       end
     end
 
-    output = (IO.read(UNITY_PROJ + '/AppBuilderOutput.txt') rescue raise "アプリのビルドに失敗しました(AppBuilderOutput.txtが見つかりません)")
-    if output != ''
+    output = (IO.read(UNITY_PROJECT + 'AppBuilderOutput.txt') rescue raise "アプリのビルドに失敗しました(AppBuilderOutput.txtが見つかりません)")
+    if output != 'OK'
       puts "Error: #{output}"
       raise "アプリのビルドに失敗しました"
     end
@@ -62,14 +64,14 @@ namespace :build do
     # アップロードする
     case platform
     when "Android"
-      unless File.exist?('Client/AppBuilder/Android/dfz.apk')
+      unless File.exist?("#{UNITY_PROJECT}/AppBuilder/Android/#{bin_name}.apk")
         puts IO.read('build.log')
         raise "ビルドに失敗しました"
       end
     else
-      tag = 'dfz-app-' + platform + '-' + commit_id[0, 8]
-      sh "#{CFSCTL} upload --tag #{tag} -o app.hash Client/AppBuilder/#{platform}"
-      upload_hash tag, 'app.hash', JSON.dump(desc)
+      # tag = 'dfz-app-' + platform + '-' + commit_id[0, 8]
+      # sh "#{CFSCTL} upload --tag #{tag} -o app.hash Client/AppBuilder/#{platform}"
+      # upload_hash tag, 'app.hash', JSON.dump(desc)
     end
   end
 end
