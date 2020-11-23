@@ -14,6 +14,8 @@ public class MainMenu : MonoBehaviour
 	{
 		var id = target.GetId();
 		GameScene.Instance.SetControlBox(id);
+		PlayerPrefs.SetInt("ControlBox", id);
+		PlayerPrefs.Save();
 	}
 
 	public void Open()

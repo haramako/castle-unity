@@ -30,7 +30,7 @@ public class GameScene : MonoSingleton<GameScene>
 		yield return setupFiles();
 		Emulator.Setup();
 
-		SetControlBox(0);
+		SetControlBox(PlayerPrefs.GetInt("ControlBox", 0));
 
 		Emulator.LoadState();
 
