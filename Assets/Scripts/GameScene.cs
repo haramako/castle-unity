@@ -12,8 +12,12 @@ using UnityEngine.EventSystems;
 
 public class GameScene : MonoSingleton<GameScene>
 {
-	public RawImage RawImage;
 	public Emulator Emulator;
+    public ControlBox[] ControlBoxes;
+    public MainMenu MainMenu;
+
+    [NonSerialized]
+    public ControlBox CurrentControlBox;
 
 	Canvas canvas_;
 	TouchArea[] touchAreas_;
@@ -22,13 +26,13 @@ public class GameScene : MonoSingleton<GameScene>
 	{
 		Application.targetFrameRate = 60;
 
-		setupUi();
+        setupUi();
 		yield return setupFiles();
 		Emulator.Setup();
 
-		RawImage.texture = Emulator.ScreenTexture;
+        SetControlBox(0);
 
-		Emulator.LoadState();
+        Emulator.LoadState();
 
 		while (true)
 		{
@@ -63,7 +67,6 @@ public class GameScene : MonoSingleton<GameScene>
 	void setupUi()
 	{
 		canvas_ = FindObjectOfType<Canvas>();
-		touchAreas_ = FindObjectsOfType<TouchArea>();
 	}
 
 	void updateMisc()
@@ -189,5 +192,17 @@ public class GameScene : MonoSingleton<GameScene>
 	{
 		Emulator.ResetMachine();
 	}
+
+    public void SetControlBox(int id)
+    {
+        foreach(var cb in ControlBoxes)
+        {
+            cb.gameObject.SetActive(false);
+        }
+        CurrentControlBox = ControlBoxes[id];
+        CurrentControlBox.gameObject.SetActive(true);
+        CurrentControlBox.ScreenImage.texture = Emulator.ScreenTexture;
+        touchAreas_ = CurrentControlBox.gameObject.GetComponentsInChildren<TouchArea>();
+    }
 
 }
