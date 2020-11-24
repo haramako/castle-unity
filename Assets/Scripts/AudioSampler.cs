@@ -66,7 +66,7 @@ public class AudioSampler : MonoBehaviour
 
 		if (bufTotal_ - readTotal_ > 4096 * 2)
 		{
-			readTotal_ += data.Length * 1;
+			readTotal_ += 1024;
 			Debug.Log("buf over");
 		}
 
