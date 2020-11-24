@@ -18,6 +18,7 @@ public class Emulator : MonoSingleton<Emulator>
 	static HashSet<LibRetro.Environment> UnknownMessageWarned = new HashSet<LibRetro.Environment>();
 
 	public Texture2D ScreenTexture { get; private set; }
+	public AudioSampler AudioSampler;
 
 	[AOT.MonoPInvokeCallback(typeof(LibRetro.retro_environment_t))]
 	public static unsafe int environment_callback(LibRetro.Environment cmd, void* data)
@@ -104,7 +105,9 @@ public class Emulator : MonoSingleton<Emulator>
 	[AOT.MonoPInvokeCallback(typeof(LibRetro.retro_audio_sample_batch_t))]
 	public static unsafe UInt64 audio_sample_batch_callback(UInt16* data, UInt64 frames)
 	{
-		return 0;
+		//Debug.Log($"audio_sample_batch #{frames}");
+		Instance.AudioSampler.Fill(data, (int)frames);
+		return frames;
 	}
 
 	public static void log(string message)

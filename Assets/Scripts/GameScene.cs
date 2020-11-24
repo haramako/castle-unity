@@ -22,6 +22,9 @@ public class GameScene : MonoSingleton<GameScene>
 	Canvas canvas_;
 	TouchArea[] touchAreas_;
 
+	float duration_; // エミュレータの経過時間
+	int frame_; // エミュレータの経過フレーム
+
 	IEnumerator Start()
 	{
 		Application.targetFrameRate = 60;
@@ -38,7 +41,14 @@ public class GameScene : MonoSingleton<GameScene>
 		{
 			updateMisc();
 			updateInput(); // Emulator.RunOneFrame より先が望ましい
-			Emulator.RunOneFrame();
+
+			duration_ += Time.deltaTime;
+			var targetFrame = duration_ * 60.0f;
+			while (frame_ <= targetFrame)
+			{
+				Emulator.RunOneFrame();
+				frame_++;
+			}
 			yield return null;
 		}
 
@@ -203,10 +213,6 @@ public class GameScene : MonoSingleton<GameScene>
 		CurrentControlBox.gameObject.SetActive(true);
 		CurrentControlBox.ScreenImage.texture = Emulator.ScreenTexture;
 		touchAreas_ = CurrentControlBox.gameObject.GetComponentsInChildren<TouchArea>();
-		foreach( var t in touchAreas_)
-		{
-			Debug.Log(t);
-		}
 	}
 
 }
